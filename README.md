@@ -21,7 +21,7 @@ A Django-based web application for managing ice production, sales, inventory, ex
 ### Installation
 1. **Clone the repository**
    ```pwsh
-   git clone <your-repo-url>
+   git clone <https://github.com/mufudza/ICE-MERCHANTS.git>
    cd "ICE MERCHANTS"
    ```
 2. **Install Python dependencies**
