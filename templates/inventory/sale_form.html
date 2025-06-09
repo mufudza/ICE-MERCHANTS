@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ title }} - Ice Business Management{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-neutral-900 sm:truncate sm:text-3xl sm:tracking-tight">{{ title }}</h2>
+    </div>
+    <div class="mt-4 flex md:ml-4 md:mt-0">
+      <a href="{% url 'sale_list' %}" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-700 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50">
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+        </svg>
+        Back to List
+      </a>
+    </div>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg slide-in">
+    <div class="px-4 py-5 sm:p-6">
+      <form method="post">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <div class="sm:col-span-3">
+            {{ form.date|as_crispy_field }}
+          </div>
+          <div class="sm:col-span-3">
+            {{ form.quantity|as_crispy_field }}
+          </div>
+          <div class="sm:col-span-3">
+            {{ form.price_per_unit|as_crispy_field }}
+            <span class="text-xs text-neutral-400 block mt-1">Enter price per unit in US Dollars ($)</span>
+          </div>
+          <div class="sm:col-span-3">
+            {{ form.customer|as_crispy_field }}
+          </div>
+          <div class="sm:col-span-6">
+            {{ form.notes|as_crispy_field }}
+          </div>
+        </div>
+        <div class="mt-6 flex justify-end space-x-3">
+          <a href="{% url 'sale_list' %}" class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50">
+            Cancel
+          </a>
+          <button type="submit" class="inline-flex justify-center rounded-md bg-primary-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+            Save Sale Record
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

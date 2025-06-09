@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Deactivate Employee - Ice Business Management{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto mt-10 p-6 bg-white rounded shadow">
+  <h2 class="text-xl font-bold mb-4">Deactivate Employee</h2>
+  <p>Are you sure you want to deactivate <strong>{{ employee.username }}</strong>?</p>
+  <form method="post" class="mt-6 space-y-4">
+    {% csrf_token %}
+    <div>
+      <label class="block text-sm font-medium text-neutral-700">Reason for deactivation</label>
+      <textarea name="reason" rows="3" required class="w-full border rounded px-3 py-2 mt-1"></textarea>
+    </div>
+    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Deactivate</button>
+    <a href="{% url 'employee_list' %}" class="bg-neutral-200 px-4 py-2 rounded ml-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

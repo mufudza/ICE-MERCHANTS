@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Ice Business Management{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-neutral-900 sm:truncate sm:text-3xl sm:tracking-tight">Dashboard</h2>
+    </div>
+    <div class="mt-4 flex md:ml-4 md:mt-0">
+      <a href="{% url 'add_production' %}" class="ml-3 inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+        </svg>
+        Add Production
+      </a>
+      <a href="{% url 'add_sale' %}" class="ml-3 inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+        </svg>
+        Record Sale
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats overview -->
+  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6 grow-in">
+    <!-- Current Stock -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-primary-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dt class="text-sm font-medium text-neutral-500 truncate">Current Stock</dt>
+            <dd class="flex items-baseline">
+              <div class="text-2xl font-semibold text-neutral-900">{{ current_stock }}</div>
+              <div class="ml-2 text-sm text-neutral-500">ice blocks</div>
+            </dd>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Sales -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-success-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-success-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dt class="text-sm font-medium text-neutral-500 truncate">Total Revenue</dt>
+            <dd class="flex items-baseline">
+              <div class="text-2xl font-semibold text-neutral-900">${{ total_sales.total_revenue|floatformat:2 }}</div>
+              <div class="ml-2 flex items-baseline text-sm font-semibold text-success-600">
+                <div>
+                  {% if recent_sales.recent_revenue > 0 %}
+                  +${{ recent_sales.recent_revenue|floatformat:2 }}
+                  {% endif %}
+                </div>
+                <div class="text-neutral-500 font-normal">
+                  {% if recent_sales.recent_revenue > 0 %}
+                  (last 30 days)
+                  {% endif %}
+                </div>
+              </div>
+            </dd>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Expenses -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-warning-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-warning-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dt class="text-sm font-medium text-neutral-500 truncate">Total Expenses</dt>
+            <dd class="flex items-baseline">
+              <div class="text-2xl font-semibold text-neutral-900">${{ total_expenses.total_amount|floatformat:2 }}</div>
+              <div class="ml-2 flex items-baseline text-sm font-semibold text-warning-600">
+                <div>
+                  {% if recent_expenses.recent_amount > 0 %}
+                  +${{ recent_expenses.recent_amount|floatformat:2 }}
+                  {% endif %}
+                </div>
+                <div class="text-neutral-500 font-normal">
+                  {% if recent_expenses.recent_amount > 0 %}
+                  (last 30 days)
+                  {% endif %}
+                </div>
+              </div>
+            </dd>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Net Profit -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-primary-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dt class="text-sm font-medium text-neutral-500 truncate">Net Profit</dt>
+            <dd class="flex items-baseline">
+              <div class="text-2xl font-semibold text-neutral-900">${{ total_profit|floatformat:2 }}</div>
+              <div class="ml-2 flex items-baseline text-sm font-semibold {% if recent_profit > 0 %}text-success-600{% else %}text-error-600{% endif %}">
+                <div>
+                  {% if recent_profit != 0 %}
+                  {% if recent_profit > 0 %}+{% endif %}${{ recent_profit|floatformat:2 }}
+                  {% endif %}
+                </div>
+                <div class="text-neutral-500 font-normal">
+                  {% if recent_profit != 0 %}
+                  (last 30 days)
+                  {% endif %}
+                </div>
+              </div>
+            </dd>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts and Activity -->
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <!-- Revenue Chart -->
+    <div class="bg-white rounded-lg shadow overflow-hidden slide-in">
+      <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+        <h3 class="text-lg leading-6 font-medium text-neutral-900">Financial Performance</h3>
+        <a href="{% url 'reports' %}" class="text-sm text-primary-600 hover:text-primary-800">
+          View Full Report →
+        </a>
+      </div>
+      <div class="px-4 py-5 sm:p-6">
+        <canvas id="financialChart" height="250"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-lg shadow overflow-hidden slide-in">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-neutral-900">Recent Activity</h3>
+      </div>
+      <div class="divide-y divide-neutral-200">
+        <div class="px-4 py-3 sm:px-6">
+          <h4 class="text-sm font-medium text-primary-600">Latest Productions</h4>
+          <div class="flow-root mt-2">
+            <ul class="-my-2 divide-y divide-neutral-200">
+              {% for production in recent_productions %}
+              <li class="py-2">
+                <div class="flex items-center space-x-4">
+                  <div class="flex-shrink-0">
+                    <span class="flex items-center justify-center h-8 w-8 rounded-full bg-primary-100 text-primary-700">
+                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-900 truncate">
+                      {{ production.quantity }} ice blocks produced
+                    </p>
+                    <p class="text-sm text-neutral-500 truncate">
+                      {{ production.date }} • ${{ production.total_cost|floatformat:2 }}
+                    </p>
+                  </div>
+                  <div>
+                    <a href="{% url 'edit_production' production.id %}" class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-neutral-300 text-sm leading-5 font-medium rounded-full text-neutral-700 bg-white hover:bg-neutral-50">
+                      View
+                    </a>
+                  </div>
+                </div>
+              </li>
+              {% empty %}
+              <li class="py-4">
+                <div class="flex items-center space-x-4">
+                  <p class="text-sm text-neutral-500">No production records yet.</p>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="px-4 py-3 sm:px-6">
+          <h4 class="text-sm font-medium text-primary-600">Latest Sales</h4>
+          <div class="flow-root mt-2">
+            <ul class="-my-2 divide-y divide-neutral-200">
+              {% for sale in recent_sales_list %}
+              <li class="py-2">
+                <div class="flex items-center space-x-4">
+                  <div class="flex-shrink-0">
+                    <span class="flex items-center justify-center h-8 w-8 rounded-full bg-success-100 text-success-700">
+                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-900 truncate">
+                      {{ sale.quantity }} ice blocks sold{% if sale.customer %} to {{ sale.customer }}{% endif %}
+                    </p>
+                    <p class="text-sm text-neutral-500 truncate">
+                      {{ sale.date }} • ${{ sale.total_revenue|floatformat:2 }}
+                    </p>
+                  </div>
+                  <div>
+                    <a href="{% url 'edit_sale' sale.id %}" class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-neutral-300 text-sm leading-5 font-medium rounded-full text-neutral-700 bg-white hover:bg-neutral-50">
+                      View
+                    </a>
+                  </div>
+                </div>
+              </li>
+              {% empty %}
+              <li class="py-4">
+                <div class="flex items-center space-x-4">
+                  <p class="text-sm text-neutral-500">No sales records yet.</p>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Data for chart
+    const monthlyData = {{ monthly_data|safe }};
+
+    // Extract data for chart
+    const labels = monthlyData.map(item => item.month);
+    const salesData = monthlyData.map(item => item.sales);
+    const expensesData = monthlyData.map(item => item.expenses);
+    const profitData = monthlyData.map(item => item.profit);
+
+    // Create chart
+    const ctx = document.getElementById('financialChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Revenue',
+            data: salesData,
+            backgroundColor: 'rgba(33, 150, 243, 0.7)',
+            borderColor: 'rgba(33, 150, 243, 1)',
+            borderWidth: 1
+          },
+          {
+            label: 'Expenses',
+            data: expensesData,
+            backgroundColor: 'rgba(255, 152, 0, 0.7)',
+            borderColor: 'rgba(255, 152, 0, 1)',
+            borderWidth: 1
+          },
+          {
+            label: 'Profit',
+            data: profitData,
+            type: 'line',
+            fill: false,
+            backgroundColor: 'rgba(76, 175, 80, 1)',
+            borderColor: 'rgba(76, 175, 80, 1)',
+            tension: 0.1,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: 'rgba(76, 175, 80, 1)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: true,
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            ticks: {
+              callback: function(value) {
+                return '$' + value;
+              }
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': $' + context.raw.toFixed(2);
+              }
+            }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              padding: 15
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

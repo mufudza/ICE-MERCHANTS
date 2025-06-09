@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports - Ice Business Management{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-neutral-900 sm:truncate sm:text-3xl sm:tracking-tight">Business Reports</h2>
+    </div>
+  </div>
+
+  <!-- Overview Stats -->
+  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6 grow-in">
+    <!-- Current Stock -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-primary-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-neutral-500 truncate">Current Stock</dt>
+              <dd class="flex items-baseline">
+                <div class="text-2xl font-semibold text-neutral-900">{{ current_stock }}</div>
+                <div class="ml-2 text-sm font-medium text-neutral-500">ice blocks</div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Production -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-primary-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-neutral-500 truncate">Total Production</dt>
+              <dd class="flex items-baseline">
+                <div class="text-2xl font-semibold text-neutral-900">{{ total_production.total_quantity }}</div>
+                <div class="ml-2 text-sm font-medium text-neutral-500">units</div>
+              </dd>
+              <dd class="flex items-baseline mt-1">
+                <div class="text-sm text-neutral-500">Cost: ${{ total_production.total_cost|floatformat:2 }}</div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Sales -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-success-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-success-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-neutral-500 truncate">Total Sales</dt>
+              <dd class="flex items-baseline">
+                <div class="text-2xl font-semibold text-neutral-900">{{ total_sales.total_quantity }}</div>
+                <div class="ml-2 text-sm font-medium text-neutral-500">units</div>
+              </dd>
+              <dd class="flex items-baseline mt-1">
+                <div class="text-sm text-neutral-500">Revenue: ${{ total_sales.total_revenue|floatformat:2 }}</div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Net Profit -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-primary-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-neutral-500 truncate">Net Profit</dt>
+              <dd class="flex items-baseline">
+                <div class="text-2xl font-semibold text-neutral-900">${{ total_profit|floatformat:2 }}</div>
+              </dd>
+              <dd class="flex items-baseline mt-1">
+                <div class="text-sm text-neutral-500">Expenses: ${{ total_expenses.total_amount|floatformat:2 }}</div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Charts -->
+  <div class="grid grid-cols-1 gap-5 mb-6">
+    <!-- Monthly Performance Chart -->
+    <div class="bg-white rounded-lg shadow overflow-hidden slide-in">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-neutral-900">Monthly Performance</h3>
+      </div>
+      <div class="px-4 py-5 sm:p-6">
+        <canvas id="monthlyPerformanceChart" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secondary Charts -->
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <!-- Production vs Sales Chart -->
+    <div class="bg-white rounded-lg shadow overflow-hidden slide-in">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-neutral-900">Production vs Sales</h3>
+      </div>
+      <div class="px-4 py-5 sm:p-6">
+        <canvas id="productionSalesChart" height="250"></canvas>
+      </div>
+    </div>
+
+    <!-- Expense Breakdown Chart -->
+    <div class="bg-white rounded-lg shadow overflow-hidden slide-in">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-neutral-900">Expense Breakdown</h3>
+      </div>
+      <div class="px-4 py-5 sm:p-6">
+        <canvas id="expenseBreakdownChart" height="250"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JSON data for charts -->
+{{ monthly_data|json_script:"monthly-data" }}
+{{ expense_by_type|json_script:"expense-by-type" }}
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Debug: Check if Chart.js is loaded
+    if (typeof Chart === 'undefined') {
+      console.error('Chart.js is not loaded!');
+      return;
+    }
+    // Data for charts (parsed from safe JSON)
+    var monthlyData = JSON.parse(document.getElementById('monthly-data').textContent);
+    var expensesByType = JSON.parse(document.getElementById('expense-by-type').textContent);
+    // Debug: Log data
+    console.log('monthlyData:', monthlyData);
+    console.log('expensesByType:', expensesByType);
+    if (!Array.isArray(monthlyData) || monthlyData.length === 0) {
+      console.warn('No monthly data available for charts.');
+      return;
+    }
+    // Extract data for monthly performance chart
+    var labels = monthlyData.map(item => item.month);
+    var revenueData = monthlyData.map(item => item.revenue);
+    var expensesData = monthlyData.map(item => item.expenses);
+    var profitData = monthlyData.map(item => item.profit);
+    // Create monthly performance chart
+    var performanceCanvas = document.getElementById('monthlyPerformanceChart');
+    if (!performanceCanvas) {
+      console.error('monthlyPerformanceChart canvas not found!');
+      return;
+    }
+    var performanceCtx = performanceCanvas.getContext('2d');
+    new Chart(performanceCtx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Revenue',
+            data: revenueData,
+            backgroundColor: 'rgba(33, 150, 243, 0.7)',
+            borderColor: 'rgba(33, 150, 243, 1)',
+            borderWidth: 1
+          },
+          {
+            label: 'Expenses',
+            data: expensesData,
+            backgroundColor: 'rgba(255, 152, 0, 0.7)',
+            borderColor: 'rgba(255, 152, 0, 1)',
+            borderWidth: 1
+          },
+          {
+            label: 'Profit',
+            data: profitData,
+            type: 'line',
+            fill: false,
+            backgroundColor: 'rgba(76, 175, 80, 1)',
+            borderColor: 'rgba(76, 175, 80, 1)',
+            tension: 0.1,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: 'rgba(76, 175, 80, 1)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: true,
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            ticks: {
+              callback: function(value) {
+                return '$' + value;
+              }
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': $' + context.raw.toFixed(2);
+              }
+            }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              padding: 15
+            }
+          }
+        }
+      }
+    });
+    // Extract data for production vs sales chart
+    var productionData = monthlyData.map(item => item.production);
+    var salesData = monthlyData.map(item => item.sales_quantity);
+    // Create production vs sales chart
+    var productionSalesCanvas = document.getElementById('productionSalesChart');
+    if (!productionSalesCanvas) {
+      console.error('productionSalesChart canvas not found!');
+      return;
+    }
+    var productionSalesCtx = productionSalesCanvas.getContext('2d');
+    new Chart(productionSalesCtx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Production',
+            data: productionData,
+            borderColor: 'rgba(33, 150, 243, 1)',
+            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2,
+            pointRadius: 3
+          },
+          {
+            label: 'Sales',
+            data: salesData,
+            borderColor: 'rgba(76, 175, 80, 1)',
+            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2,
+            pointRadius: 3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: true,
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            title: {
+              display: true,
+              text: 'Units'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + context.raw + ' units';
+              }
+            }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              padding: 15
+            }
+          }
+        }
+      }
+    });
+    // Create expense breakdown chart
+    var expenseBreakdownCanvas = document.getElementById('expenseBreakdownChart');
+    if (expensesByType && expensesByType.length > 0 && expenseBreakdownCanvas) {
+      // Generate color palette
+      const colorPalette = [
+        'rgba(33, 150, 243, 0.7)',  // blue
+        'rgba(76, 175, 80, 0.7)',   // green
+        'rgba(156, 39, 176, 0.7)',  // purple
+        'rgba(255, 193, 7, 0.7)',   // yellow
+        'rgba(63, 81, 181, 0.7)',   // indigo
+        'rgba(255, 152, 0, 0.7)',   // orange
+        'rgba(0, 150, 136, 0.7)',   // teal
+        'rgba(233, 30, 99, 0.7)',   // pink
+        'rgba(96, 125, 139, 0.7)'   // grey
+      ];
+      // Extract data for chart
+      var expenseLabels = expensesByType.map(item => {
+        // Convert expense_type to display name
+        const typeMap = {
+          'utility': 'Utilities',
+          'maintenance': 'Maintenance',
+          'salary': 'Salaries',
+          'rent': 'Rent',
+          'equipment': 'Equipment',
+          'raw_material': 'Raw Materials',
+          'transportation': 'Transportation',
+          'marketing': 'Marketing',
+          'other': 'Other'
+        };
+        return typeMap[item.expense_type] || item.expense_type;
+      });
+      var expenseData = expensesByType.map(item => item.total);
+      var expenseColors = expensesByType.map((_, index) => colorPalette[index % colorPalette.length]);
+      // Create chart
+      var expenseCtx = expenseBreakdownCanvas.getContext('2d');
+      new Chart(expenseCtx, {
+        type: 'pie',
+        data: {
+          labels: expenseLabels,
+          datasets: [{
+            data: expenseData,
+            backgroundColor: expenseColors,
+            borderColor: 'white',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                boxWidth: 12,
+                padding: 15
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = Math.round((value / total) * 100);
+                  return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    } else if (!expenseBreakdownCanvas) {
+      console.error('expenseBreakdownChart canvas not found!');
+    } else {
+      console.warn('No expense data available for expense breakdown chart.');
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Reactivate Employee - Ice Business Management{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto mt-10 p-6 bg-white rounded shadow">
+  <h2 class="text-xl font-bold mb-4">Reactivate Employee</h2>
+  <p>Are you sure you want to reactivate <strong>{{ employee.username }}</strong>?</p>
+  <form method="post" class="mt-6 flex gap-4">
+    {% csrf_token %}
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Reactivate</button>
+    <a href="{% url 'employee_list' %}" class="bg-neutral-200 px-4 py-2 rounded">Cancel</a>
+  </form>
+</div>
+{% endblock %}

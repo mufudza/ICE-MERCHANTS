@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}Expenses - Ice Business Management{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-neutral-900 sm:truncate sm:text-3xl sm:tracking-tight">Expenses</h2>
+    </div>
+    <div class="mt-4 flex md:ml-4 md:mt-0">
+      <a href="{% url 'add_expense' %}" class="ml-3 inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+        </svg>
+        Add Expense
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-3 mb-6">
+    <!-- Total Expenses Card -->
+    <div class="bg-white overflow-hidden shadow rounded-lg grow-in lg:col-span-1">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-warning-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-warning-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dt class="text-sm font-medium text-neutral-500 truncate">Total Expenses</dt>
+            <dd class="flex items-baseline">
+              <div class="text-2xl font-semibold text-neutral-900">${{ total|floatformat:2 }}</div>
+            </dd>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expense Breakdown Chart -->
+    <div class="bg-white overflow-hidden shadow rounded-lg grow-in lg:col-span-2">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-base font-semibold leading-6 text-neutral-900">Expense Breakdown</h3>
+        <div class="mt-2">
+          <canvas id="expenseChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expenses Table -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg slide-in">
+    {% if expenses %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-neutral-200">
+        <thead class="bg-neutral-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Date</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Description</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Type</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Amount</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Recorded By</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-neutral-200">
+          {% for expense in expenses %}
+          <tr class="hover:bg-neutral-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">{{ expense.date }}</td>
+            <td class="px-6 py-4 text-sm text-neutral-700">{{ expense.description }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                {% if expense.expense_type == 'utility' %}bg-blue-100 text-blue-800
+                {% elif expense.expense_type == 'maintenance' %}bg-green-100 text-green-800
+                {% elif expense.expense_type == 'salary' %}bg-purple-100 text-purple-800
+                {% elif expense.expense_type == 'rent' %}bg-yellow-100 text-yellow-800
+                {% elif expense.expense_type == 'equipment' %}bg-indigo-100 text-indigo-800
+                {% elif expense.expense_type == 'raw_material' %}bg-orange-100 text-orange-800
+                {% elif expense.expense_type == 'transportation' %}bg-teal-100 text-teal-800
+                {% elif expense.expense_type == 'marketing' %}bg-pink-100 text-pink-800
+                {% else %}bg-neutral-100 text-neutral-800{% endif %}">
+                {{ expense.get_expense_type_display }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">${{ expense.amount }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">{{ expense.created_by.username|default:"System" }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              {% if user.is_superuser %}
+                <a href="{% url 'edit_expense' expense.id %}" class="text-primary-600 hover:text-primary-900 mr-3">Edit</a>
+                <a href="{% url 'delete_expense' expense.id %}" class="text-red-600 hover:underline">Delete</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="px-4 py-12 flex flex-col items-center justify-center text-center">
+      <svg class="h-12 w-12 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+      </svg>
+      <h3 class="mt-2 text-lg font-medium text-neutral-900">No expenses recorded</h3>
+      <p class="mt-1 text-sm text-neutral-500">Get started by adding your first expense.</p>
+      <div class="mt-6">
+        <a href="{% url 'add_expense' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Add Expense
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- JSON data for chart -->
+{{ expense_by_type|json_script:"expense-by-type" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Data for chart
+    const expensesByType = JSON.parse(document.getElementById('expense-by-type').textContent);
+
+    if (expensesByType && expensesByType.length > 0) {
+      // Generate color palette
+      const colorPalette = [
+        'rgba(33, 150, 243, 0.7)',  // blue
+        'rgba(76, 175, 80, 0.7)',   // green
+        'rgba(156, 39, 176, 0.7)',  // purple
+        'rgba(255, 193, 7, 0.7)',   // yellow
+        'rgba(63, 81, 181, 0.7)',   // indigo
+        'rgba(255, 152, 0, 0.7)',   // orange
+        'rgba(0, 150, 136, 0.7)',   // teal
+        'rgba(233, 30, 99, 0.7)',   // pink
+        'rgba(96, 125, 139, 0.7)'   // grey
+      ];
+
+      // Extract data for chart
+      const labels = expensesByType.map(item => {
+        // Convert expense_type to display name
+        const typeMap = {
+          'utility': 'Utilities',
+          'maintenance': 'Maintenance',
+          'salary': 'Salaries',
+          'rent': 'Rent',
+          'equipment': 'Equipment',
+          'raw_material': 'Raw Materials',
+          'transportation': 'Transportation',
+          'marketing': 'Marketing',
+          'other': 'Other'
+        };
+        return typeMap[item.expense_type] || item.expense_type;
+      });
+
+      const data = expensesByType.map(item => item.total);
+      const backgroundColors = expensesByType.map((_, index) => colorPalette[index % colorPalette.length]);
+
+      // Create chart
+      const ctx = document.getElementById('expenseChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: backgroundColors,
+            borderColor: 'white',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                boxWidth: 12,
+                padding: 15
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = Math.round((value / total) * 100);
+                  return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                }
+              }
+            }
+          },
+          cutout: '60%'
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

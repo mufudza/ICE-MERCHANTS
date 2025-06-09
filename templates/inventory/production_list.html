@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Production Records - Ice Business Management{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-neutral-900 sm:truncate sm:text-3xl sm:tracking-tight">Production Records</h2>
+    </div>
+    <div class="mt-4 flex md:ml-4 md:mt-0">
+      <a href="{% url 'add_production' %}" class="ml-3 inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+        </svg>
+        Add Production
+      </a>
+    </div>
+  </div>
+
+  <!-- Production Records Table -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg grow-in">
+    {% if productions %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-neutral-200">
+        <thead class="bg-neutral-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Date</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Quantity</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Cost Per Unit</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Total Cost</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Recorded By</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-neutral-200">
+          {% for production in productions %}
+          <tr class="hover:bg-neutral-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">{{ production.date }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">{{ production.quantity }} units</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">${{ production.cost_per_unit }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">${{ production.total_cost }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">{{ production.created_by.username|default:"System" }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              {% if user.is_superuser %}
+                <a href="{% url 'edit_production' production.id %}" class="text-primary-600 hover:text-primary-900 mr-3">Edit</a>
+                <a href="{% url 'delete_production' production.id %}" class="text-red-600 hover:underline">Delete</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="px-4 py-12 flex flex-col items-center justify-center text-center">
+      <svg class="h-12 w-12 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+      </svg>
+      <h3 class="mt-2 text-lg font-medium text-neutral-900">No production records</h3>
+      <p class="mt-1 text-sm text-neutral-500">Get started by creating your first production record.</p>
+      <div class="mt-6">
+        <a href="{% url 'add_production' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Add Production
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
